@@ -1,3 +1,5 @@
+#pragma once
+
 _Task VendingMachine {
     Printer &prt;
 		NameServer &nameServer;

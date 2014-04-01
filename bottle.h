@@ -1,3 +1,5 @@
+#pragma once
+
 _Task BottlingPlant {
     Printer &prt;
 		NameServer &nameServer;

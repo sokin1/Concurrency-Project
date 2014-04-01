@@ -1,3 +1,5 @@
+#pragma once
+
 _Task Truck {
     Printer &prt;
 		NameServer &nameServer;

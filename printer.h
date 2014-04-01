@@ -1,3 +1,5 @@
+#pragma once
+
 _Monitor / _Cormonitor Printer {
   public:
     enum Kind { Parent, WATCardOffice, NameServer, Truck, BottlingPlant, Student, Vending, Courier };
