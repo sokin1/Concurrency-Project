@@ -1,0 +1,1 @@
+void processConfigFile( const char *configFile, ConfigParms &cparms );
