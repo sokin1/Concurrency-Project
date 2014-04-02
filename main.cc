@@ -1,3 +1,5 @@
+#include "iostream"
+using namespace std;
 
 void uMain::main(){
 	//Read in the config file

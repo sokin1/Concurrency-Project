@@ -1,4 +1,4 @@
-
+#include "truck.h"
 
 Truck::Truck( Printer &prt, NameServer &nameServer, BottlingPlant &plant,
 unsigned int numVendingMachines, unsigned int maxStockPerFlavour ): prt(prt), nameServer(nameServer),
@@ -9,19 +9,21 @@ plant(plant),numVendingMachines(numVendingMachines),maxStockPerFlavour(maxStockP
 void Truck::main(){
 	
 	while(true){
-		//getting coffee
+		// Get coffee from Timmy's
 		yield(RNG(1,10)); 
 		
-		//getting cargo
+		// Get cargo from plant
 		bool isPlantClosed = plant.getShipment(cargo);
 		if (isPlantClosed){
 			break;	//exit loop
 		}
 		
-		// CHANGE THE FOLLOWING TO GET MACHINE LIST
+		// Get a list of vending machines
+		VendingMachine** v_list = nameServer.getMachineList();		
+
 		// Fill all the vending machines
-		for(unsigned int id=0; id<numVendingMachines; id++){
-			VendingMachine* v = nameServer.getMachine(id)		//can I make this assumption that id goes from 0 to max????
+		for(unsigned int i=0; i<numVendingMachines; i++){
+			VendingMachine* v = v_list[i];
 			
 			// Check inventory
 			unsigned int* inv = v->inventory();
@@ -32,7 +34,7 @@ void Truck::main(){
 				if(cargo[i]>0){
 					unsigned int numberToRefill = maxStockPerFlavour - inv[i];
 					if (cargo[i] < numberToRefill){
-						//Not enough cargo to refill to max capacity
+						//Not enough cargo to refill to max capacity, so fill what we have
 						inv[i] += cargo[i];
 						cargo[i] = 0;
 					} else {
@@ -42,10 +44,11 @@ void Truck::main(){
 					}
 				}
 			}
+			// Restocking is completed
 			v->restocked();
 		}
 		
-		//DOES THIS HAVE TO WAIT HERE?
+		//TODO: DOES THIS HAVE TO WAIT HERE?
 		
 	}
 }

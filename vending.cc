@@ -1,4 +1,4 @@
-
+#include "vending.h"
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost,
 unsigned int maxStockPerFlavour ):prt(prt),nameServer(nameServer),id(id),sodaCost(sodaCost),
@@ -46,10 +46,14 @@ void VendingMachine::main(){
 		_Accept(buy){
 			
 		} or _Accept(inventory){
-			//block while restocking
+			// Block here while restocking
 			_Accept(restocked);
-		} 
+		} or _Accept(cost){
 		
-		// TERMINATE HERE SOMEHOW
+		} or _Accept(getId){
+		
+		}
+		
+		// TODO: TERMINATE HERE SOMEHOW
 	}
 }

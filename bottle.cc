@@ -1,4 +1,4 @@
-
+#include "bottle.h"
 
 BottlingPlant::BottlingPlant( Printer &prt, NameServer &nameServer, unsigned int numVendingMachines,
 unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour, unsigned int timeBetweenShipments):prt(prt),
@@ -14,7 +14,7 @@ bool BottlingPlant::getShipment( unsigned int cargo[] ){
 }
 
 void BottlingPlant::main(){
-	Truck t(prt, nameServer, plant, numVendingMachines, maxStockPerFlavour);
+	Truck truck(prt, nameServer, plant, numVendingMachines, maxStockPerFlavour);
 	
 	while(true){
 		//busy producing
@@ -33,6 +33,6 @@ void BottlingPlant::main(){
 		//wait for truck to pick the items up
 		_Accept(getShipment);
 		
-		// NEEDS TO TERMINATE SOMEHOW............
+		// TODO: NEEDS TO TERMINATE SOMEHOW............
 	}
 }

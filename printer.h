@@ -1,7 +1,10 @@
 #pragma once
 
-_Monitor / _Cormonitor Printer {
-  public:
+_Monitor Printer { /* or _Cormonitor */
+		unsigned int numStudents;
+		unsigned int numVendingMachines;
+		unsigned int numCouriers;
+	public:
     enum Kind { Parent, WATCardOffice, NameServer, Truck, BottlingPlant, Student, Vending, Courier };
     Printer( unsigned int numStudents, unsigned int numVendingMachines, unsigned int numCouriers );
     void print( Kind kind, char state );

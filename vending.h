@@ -8,8 +8,9 @@ _Task VendingMachine {
     unsigned int maxStockPerFlavour;
 		void main();
 		unsigned int stock[4];
+		uCondition lock;
   public:
-    enum Flavours { F1, F2, F3, F4 };      // flavours of soda (YOU DEFINE)
+    enum Flavours { F1, F2, F3, F4 };      // 4 flavours of soda (YOU DEFINE)
     enum Status { BUY, STOCK, FUNDS };     // purchase status: successful buy, out of stock, insufficient funds
     VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost,
                     unsigned int maxStockPerFlavour );
