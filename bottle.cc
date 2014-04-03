@@ -1,8 +1,11 @@
 #include "bottle.h"
+#include "MPRNG.h"
+
+extern MPRNG RNG;
 
 BottlingPlant::BottlingPlant( Printer &prt, NameServer &nameServer, unsigned int numVendingMachines,
 unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour, unsigned int timeBetweenShipments):prt(prt),
-nameserver(nameserver), numVendingMachines(numVendingMachines),
+nameServer(nameServer), numVendingMachines(numVendingMachines),
 maxShippedPerFlavour(maxShippedPerFlavour), maxStockPerFlavour(maxStockPerFlavour){}
 
 bool BottlingPlant::getShipment( unsigned int cargo[] ){
@@ -14,12 +17,12 @@ bool BottlingPlant::getShipment( unsigned int cargo[] ){
 }
 
 void BottlingPlant::main(){
-	Truck truck(prt, nameServer, plant, numVendingMachines, maxStockPerFlavour);
+	Truck truck(prt, nameServer, *this, numVendingMachines, maxStockPerFlavour);
 	
 	while(true){
 		//busy producing
 		yield(timeBetweenShipments);
-	
+		
 		//production run
 		unsigned int shipped = RNG(0,maxShippedPerFlavour);
 		production[0] = shipped;

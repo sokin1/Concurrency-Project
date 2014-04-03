@@ -1,5 +1,9 @@
 #pragma once
 
+_Monitor Printer;
+_Task NameServer;
+class WATCard;
+
 _Task VendingMachine {
     Printer &prt;
 		NameServer &nameServer;

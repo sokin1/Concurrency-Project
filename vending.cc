@@ -1,4 +1,6 @@
 #include "vending.h"
+#include "nameserver.h"
+#include "watcard.h"
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost,
 unsigned int maxStockPerFlavour ):prt(prt),nameServer(nameServer),id(id),sodaCost(sodaCost),
@@ -9,7 +11,7 @@ maxStockPerFlavour(maxStockPerFlavour){
 
 }
 
-Status VendingMachine::buy(Flavours flavour, WATCard &card){
+VendingMachine::Status VendingMachine::buy(Flavours flavour, WATCard &card){
 	// No stock
 	if (stock[flavour] == 0){
 		return STOCK;
@@ -48,11 +50,12 @@ void VendingMachine::main(){
 		} or _Accept(inventory){
 			// Block here while restocking
 			_Accept(restocked);
-		} or _Accept(cost){
-		
-		} or _Accept(getId){
-		
-		}
+		} 
+		// or _Accept(cost){	//TODO: what to do with these?
+			
+		// } or _Accept(getId){
+			
+		// }
 		
 		// TODO: TERMINATE HERE SOMEHOW
 	}

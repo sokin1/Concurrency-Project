@@ -1,4 +1,5 @@
 #include "nameserver.h"
+#include "vending.h"
 
 NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ):
 prt(prt),numVendingMachines(numVendingMachines),numStudents(numStudents){}
@@ -14,7 +15,7 @@ VendingMachine* NameServer::getMachine( unsigned int id ){
 			return machineList[i];
 		}
 	}
-	// Something is wrong, return NULL
+	// Something is wrong, so return NULL
 	return NULL;
 }
 
@@ -22,12 +23,15 @@ VendingMachine** NameServer::getMachineList(){
 	return machineList;
 }
 
-void main(){
-	_Accept(getMachine){
-		//TODO: Assign students to machines here
-	} or _Accept(getMachineList){
-	
-	} or _Accept(VMregister){
-	
+void NameServer::main(){
+	while(true){
+		_Accept(getMachine){
+			//TODO: Assign students to machines here
+		} or _Accept(getMachineList){
+			
+		} or _Accept(VMregister){
+			
+		}
+		//TODO: somehow terminate here
 	}
 }

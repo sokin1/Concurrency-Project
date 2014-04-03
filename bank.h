@@ -1,14 +1,16 @@
-_Monitor Bank {
-    struct Account {
-	unsigned int id;
-	unsigned int amount;
-    };
+#pragma once
 
-    struct Account *studentAccount;
-    unsigned int numStudents;
-    unsigned int amount;
-  public:
-    Bank( unsigned int numStudents );
-    void deposit( unsigned int id, unsigned int amount );
-    void withdraw( unsigned int id, unsigned int amount );
+_Monitor Bank {
+	struct Account {
+		unsigned int id;
+		unsigned int amount;
+	};
+
+	struct Account *studentAccount;
+	unsigned int numStudents;
+	unsigned int amount;
+public:
+	Bank( unsigned int numStudents );
+	void deposit( unsigned int id, unsigned int amount );
+	void withdraw( unsigned int id, unsigned int amount );
 };

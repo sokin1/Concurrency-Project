@@ -1,4 +1,9 @@
 #pragma once
+#include "truck.h"
+
+_Monitor Printer;
+_Task NameServer;
+_Monitor MPRNG;
 
 _Task BottlingPlant {
     Printer &prt;

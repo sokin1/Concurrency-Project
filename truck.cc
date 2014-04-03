@@ -1,4 +1,10 @@
 #include "truck.h"
+#include "MPRNG.h"
+#include "bottle.h"
+#include "nameserver.h"
+#include "vending.h"
+
+extern MPRNG RNG;
 
 Truck::Truck( Printer &prt, NameServer &nameServer, BottlingPlant &plant,
 unsigned int numVendingMachines, unsigned int maxStockPerFlavour ): prt(prt), nameServer(nameServer),
