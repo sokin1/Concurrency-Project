@@ -6,22 +6,22 @@ Printer::Printer( unsigned int numStudents, unsigned int numVendingMachines, uns
 numStudents(numStudents), numVendingMachines(numVendingMachines), numCouriers(numCouriers){
 	numOfColumns = 5 + numStudents + numVendingMachines + numCouriers;
 	buffer = new PrintBuffer[numOfColumns];
-	for( int i = 0; i < numOfColumns; i++ ) {
+	for( unsigned int i = 0; i < numOfColumns; i++ ) {
 		buffer[i].numOfArguments = -1;
 		buffer[i].buffered = false;
 	}
 	cout << "Parent\tWATOff\tNames\tTruck\tPlant\t";
-	for( int i = 0; i < numStudents; i++ ) {
+	for( unsigned int i = 0; i < numStudents; i++ ) {
 		cout << "Stud" << i << "\t";
 	}
-	for( int i = 0; i < numVendingMachines; i++ ) {
+	for( unsigned int i = 0; i < numVendingMachines; i++ ) {
 		cout << "Mach" << i << "\t";
 	}
-	for( int i = 0; i < numCouriers; i++ ) {
+	for( unsigned int i = 0; i < numCouriers; i++ ) {
 		cout << "Cour" << i << "\t";
 	}
 	cout << endl;
-	for( int i = 0; i < numOfColumns; i++ ) {
+	for( unsigned int i = 0; i < numOfColumns; i++ ) {
 		cout << "*******\t";
 	}
 	cout << endl;
@@ -33,7 +33,7 @@ numStudents(numStudents), numVendingMachines(numVendingMachines), numCouriers(nu
 // P has 0 or 1 arguments...
 
 void Printer::flush() {
-	for( int i = 0; i < numOfColumns; i++ ) {
+	for( unsigned int i = 0; i < numOfColumns; i++ ) {
 		if( buffer[i].buffered ) {
 			switch( buffer[i].numOfArguments ) {
 			case 0:
@@ -57,7 +57,7 @@ void Printer::flush() {
 }
 
 void Printer::flush_finish( unsigned int id ) {
-	for( int i = 0; i < numOfColumns; i++ ) {
+	for( unsigned int i = 0; i < numOfColumns; i++ ) {
 		if( i == id ) {
 			cout << (char)Printer::Finish;
 		} else {
