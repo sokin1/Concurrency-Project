@@ -35,7 +35,7 @@ void BottlingPlant::main(){
 		production[3] = shipped;
 		
 		//wait for truck to pick the items up
-		_Accept(getShipment) or
+		_Accept(getShipment) {} or
 		_Accept(~BottlingPlant){
 			//Make one last delivery for truck to terminate
 			isClosed = true;

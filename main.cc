@@ -17,6 +17,10 @@ MPRNG RNG;
 
 void uMain::main(){
 	
+	//Read in the seed
+	//...
+	RNG.seed(getpid());
+	
 	//Read in the config file
 	ConfigParms config;
 	processConfigFile("soda.config", config);
