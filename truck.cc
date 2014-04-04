@@ -54,7 +54,7 @@ void Truck::main(){
 			v->restocked();
 		}
 		
-		//TODO: DOES THIS HAVE TO WAIT HERE?
+		//TODO: DOES THIS HAVE TO WAIT HERE? prob not...
 		
 	}
 }
