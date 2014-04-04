@@ -1,11 +1,14 @@
 #include "watcardoffice.h"
 
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers )
-: printer( prt ), bank( bank ), numCouriers( numCouriers ) {
-	couriers = new Courier[numCouriers];
+: printer( prt ), numCouriers( numCouriers ) {
+	WATCardOffice::Courier *newCouriers[numCouriers];
+//	couriers = new WATCardOffice::Courier[numCouriers];
 	for( int i = 0; i < numCouriers; i++ ) {
-		couriers[i] = new Courier( bank );
+		newCouriers[i] = new WATCardOffice::Courier( bank, this );
 	}
+
+	couriers = newCouriers[0];
 }
 
 FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
@@ -15,33 +18,33 @@ FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
 }
 
 FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard *card ) {
-	Args args;
-	args.id = sid;
-	args.amount = amount;
-	args.card = card;
+	curArgs.id = sid;
+	curArgs.amount = amount;
+	curArgs.card = card;
 
-	struct Job *curJob = new struct Job( &args );
+	struct Job *curJob = new struct Job( curArgs );
 
-	jobList.push_back( curJob );
+	jobList.push( curJob );
 
 	return curJob->result;
 }
 
-Job* WATCardOffice::requestWork() {
+WATCardOffice::Job* WATCardOffice::requestWork() {
 	_When( jobList.empty() ) _Accept( transfer ) {
 		struct Job *newJob = jobList.front();
-		jobList.pop_front();
+		jobList.pop();
 		return newJob;
 	}
 }
 
-int Courier::doWithdraw( unsigned int id, unsigned int amount, WATCard* card ) {
+void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, WATCard* card ) {
 	bank.withdraw( id, amount );
-	card.deposit( amount );
+	card->deposit( amount );
 }
 
-void Courier::main() {
-	Job *job = requestWork();
+void WATCardOffice::Courier::main() {
+	Job *job = office->requestWork();
+
 	doWithdraw( job->args.id, job->args.amount, job->args.card );
 
 	job->result.reset();
