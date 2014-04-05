@@ -3,7 +3,8 @@
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers )
 : printer( prt ), numCouriers( numCouriers ) {
 	WATCardOffice::Courier *newCouriers[numCouriers];
-	for( int i = 0; i < numCouriers; i++ ) {
+//	couriers = new WATCardOffice::Courier[numCouriers];
+	for( unsigned int i = 0; i < numCouriers; i++ ) {
 		newCouriers[i] = new WATCardOffice::Courier( bank, this );
 	}
 
@@ -34,6 +35,8 @@ WATCardOffice::Job* WATCardOffice::requestWork() {
 		jobList.pop();
 		return newJob;
 	}
+	//This line should not be reached. Something's wrong so return NULL.
+	return NULL;
 }
 
 void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, WATCard* card ) {

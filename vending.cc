@@ -50,13 +50,13 @@ void VendingMachine::main(){
 		} or _Accept(inventory){
 			// Block here while restocking
 			_Accept(restocked);
-		} 
+		} or _Accept(~VendingMachine){
+			break;
+		}
 		// or _Accept(cost){	//TODO: what to do with these?
 			
 		// } or _Accept(getId){
 			
 		// }
-		
-		// TODO: TERMINATE HERE SOMEHOW
 	}
 }

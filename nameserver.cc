@@ -2,21 +2,23 @@
 #include "vending.h"
 
 NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ):
-prt(prt),numVendingMachines(numVendingMachines),numStudents(numStudents){}
+prt(prt),numVendingMachines(numVendingMachines),numStudents(numStudents){
+	studentAssign = new unsigned int [numStudents];
+}
+
+NameServer::~NameServer(){
+	delete studentAssign;
+}
 
 void NameServer::VMregister( VendingMachine *vendingmachine ){
 	machineList[machineCount] = vendingmachine;
 	machineCount++;
 }
 
-VendingMachine* NameServer::getMachine( unsigned int id ){
-	for (unsigned int i=0; i<numVendingMachines; i++){
-		if(machineList[i]->getId() == id){
-			return machineList[i];
-		}
-	}
-	// Something is wrong, so return NULL
-	return NULL;
+VendingMachine* NameServer::getMachine( unsigned int id ){	//id is the student's id
+	unsigned int temp = studentAssign[id];
+	studentAssign[id] = (studentAssign[id] + 1) % numVendingMachines;
+	return machineList[temp];
 }
 
 VendingMachine** NameServer::getMachineList(){
@@ -24,14 +26,24 @@ VendingMachine** NameServer::getMachineList(){
 }
 
 void NameServer::main(){
+	
+	//Assign students to vending machines
+	for (unsigned int i=0; i<numStudents; i++){
+		studentAssign[i] = i % numVendingMachines;
+	}
+	
+	//Let vending machine registering finish first before students can get the location of a machine
+	unsigned int count = 0;
+	while(count < numVendingMachines){
+		_Accept(VMregister);
+		count++;
+	}
+	
 	while(true){
 		_Accept(getMachine){
-			//TODO: Assign students to machines here
 		} or _Accept(getMachineList){
-			
-		} or _Accept(VMregister){
-			
+		} or _Accept(~NameServer){
+			break;
 		}
-		//TODO: somehow terminate here
 	}
 }
