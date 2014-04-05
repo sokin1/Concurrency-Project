@@ -1,36 +1,41 @@
 #include "student.h"
+#include "watcard.h"
+#include "vending.h"
+#include "nameserver.h"
+#include "watcardoffice.h"
+#include "MPRNG.h"
 
-extern MPRNG mprng;
+extern MPRNG RNG;
 
 Student::Student( Printer &prt, NameServer &nameServer, WATCardOffice &cardOffice, unsigned int id, 
 unsigned int maxPurchases ):prt(prt), nameServer(nameServer), cardOffice(cardOffice), 
 id(id),maxPurchases(maxPurchases){}
 
 void Student::main(){
-	unsigned int numPurchases = mprng( 1, maxPurchases+1 );
-	unsigned int flavour = mprng( 4 );
+	unsigned int numPurchases = RNG( 1, maxPurchases+1 );
+	unsigned int flavour = RNG( 4 );
 	bool reAttempt = false;
 
 	// Create watcard
-	FWATCard watcard = cardOffice.create( id, 5 );
+	WATCard::FWATCard watcard = cardOffice.create( id, 5 );
 	VendingMachine *machine;
 
 	// Purchase sodas
 	while( numPurchases != 0 ) {
 		if( !reAttempt ) {
-			yield( mprng( 1, 11 ) );
+			yield( RNG( 1, 11 ) );
 			machine = nameServer.getMachine( id );
 		}
 		reAttempt = false;
 
 		try {
 			VendingMachine::Status status;
-			status = machine->buy( flavour, *watcard() );
+			status = machine->buy( (VendingMachine::Flavours) flavour, *watcard() );
 			if( status == VendingMachine::BUY ) {
 				numPurchases--;
 			} else if ( VendingMachine::STOCK ) {
 			} else if ( VendingMachine::FUNDS ) {
-				watcard = cardOffice.transfer( id, machine->cost()+5, *watcard() );
+				watcard = cardOffice.transfer( id, machine->cost()+5, watcard() );
 			}
 		} catch( WATCardOffice::Lost ) {
 			// If card is lost, create new watcard
