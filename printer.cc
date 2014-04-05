@@ -103,37 +103,61 @@ void Printer::print( Kind kind, char state, int value1, int value2 ){
 }
 
 void Printer::print( Kind kind, unsigned int lid, char state ){
-	if( buffer[kind+lid].buffered ) {
+	int offset = kind;
+	if (kind == Printer::Vending){
+		offset = 5 + numStudents;
+	} else if (kind == Printer::Courier){
+		offset = 5 + numStudents + numVendingMachines;
+	}
+	
+	if( buffer[offset+lid].buffered ) {
 		flush();
 	}
 	if( state == Printer::Finish ) {
-		flush_finish(kind+lid);
+		flush_finish(offset+lid);
 		return;
 	}
-	buffer[kind+lid].state = (Printer::State) state;
-	buffer[kind+lid].numOfArguments = 0;
-	buffer[kind+lid].buffered = true;
+
+	buffer[offset+lid].state = (Printer::State) state;
+	buffer[offset+lid].numOfArguments = 0;
+	buffer[offset+lid].buffered = true;
 }
 
 void Printer::print( Kind kind, unsigned int lid, char state, int value1 ){
-	if( buffer[kind+lid].buffered ) {
+	int offset = kind;
+	if (kind == Printer::Vending){
+		offset = 5 + numStudents;
+	} else if (kind == Printer::Courier){
+		offset = 5 + numStudents + numVendingMachines;
+	}
+	
+	if( buffer[offset+lid].buffered ) {
 		flush();
 	}
-	buffer[kind+lid].state = (Printer::State) state;
-	buffer[kind+lid].value1 = value1;
-	buffer[kind+lid].numOfArguments = 1;
-	buffer[kind+lid].buffered = true;
+	
+	buffer[offset+lid].state = (Printer::State) state;
+	buffer[offset+lid].value1 = value1;
+	buffer[offset+lid].numOfArguments = 1;
+	buffer[offset+lid].buffered = true;
 }
 
 void Printer::print( Kind kind, unsigned int lid, char state, int value1, int value2 ){
-	if( buffer[kind+lid].buffered ) {
+	int offset = kind;
+	if (kind == Printer::Vending){
+		offset = 5 + numStudents;
+	} else if (kind == Printer::Courier){
+		offset = 5 + numStudents + numVendingMachines;
+	}
+	
+	if( buffer[offset+lid].buffered ) {
 		flush();
 	}
-	buffer[kind+lid].state = (Printer::State) state;
-	buffer[kind+lid].value1 = value1;
-	buffer[kind+lid].value2 = value2;
-	buffer[kind+lid].numOfArguments = 2;
-	buffer[kind+lid].buffered = true;
+
+	buffer[offset+lid].state = (Printer::State) state;
+	buffer[offset+lid].value1 = value1;
+	buffer[offset+lid].value2 = value2;
+	buffer[offset+lid].numOfArguments = 2;
+	buffer[offset+lid].buffered = true;
 }
 
 Printer::~Printer(){

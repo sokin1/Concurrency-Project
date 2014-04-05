@@ -1,20 +1,22 @@
 #include "watcardoffice.h"
 #include "MPRNG.h"
+#include "printer.h"
 
-#include <iostream>
+// #include <iostream>
 
 extern MPRNG RNG;
 
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers )
-: printer( prt ), numCouriers( numCouriers ) {
+: printer( prt ), numCouriers( numCouriers ), courierCount(0) {
 	Courier** temp = new Courier* [numCouriers];
 	for( unsigned int i = 0; i < numCouriers; i++ ) {
-		temp[i] = new Courier( bank, this );
+		temp[i] = new Courier( bank, this, i, prt );
 	}
 	couriers = temp;
 }
 
 FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
+	printer.print(Printer::WATCardOffice, Printer::CreationRComplete, (int)sid, (int)amount);
 	WATCard *newCard = new WATCard();
 	return transfer( sid, amount, newCard );
 }
@@ -22,17 +24,25 @@ FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
 //Transfers money from the bank to the WATCard 
 //(by creating a job and let couriers grab that job to do this)
 FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard *card ) {
+	printer.print(Printer::WATCardOffice, Printer::TransferRComplete, (int)sid, (int)amount);
+	
 	curArgs.id = sid;
 	curArgs.amount = amount;
 	curArgs.card = card;
 
 	struct Job *curJob = new struct Job( curArgs );
 	jobList.push( curJob );
-	couriers[RNG(0,numCouriers-1)]->transferDone();	//get a random courier to start the job
+	
+	//get a random courier to start the job
+	int courierNum = courierCount % numCouriers;
+	courierCount++;
+	printer.print(Printer::Courier, (unsigned int)courierNum, (char)Printer::StartFundTransfer, sid, amount);
+	couriers[courierNum]->transferDone();
 	return curJob->result;
 }
 
 WATCardOffice::Job* WATCardOffice::requestWork() {
+	printer.print(Printer::WATCardOffice, Printer::CourierRComplete);
 	struct Job *newJob = jobList.front();
 	jobList.pop();
 	return newJob;
@@ -46,6 +56,7 @@ void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, W
 void WATCardOffice::Courier::transferDone(){}
 
 void WATCardOffice::Courier::main() {
+	printer.print(Printer::Courier, (unsigned int)id, (char)Printer::Start);
 	for (;;){
 		_Accept(~Courier){
 			break;
@@ -59,14 +70,18 @@ void WATCardOffice::Courier::main() {
 			} else {
 				job->result.reset();
 				job->result.delivery( job->args.card );
+				printer.print(Printer::Courier, (unsigned int)id, (char)Printer::CompleteFundTransfer,
+				job->args.id, job->args.amount);
 			}
 			//TODO: keep this?
 			delete job;
 		}
 	}
+	printer.print(Printer::Courier, (unsigned int)id, (char)Printer::Finish);
 }
 
 void WATCardOffice::main() {
+	printer.print(Printer::WATCardOffice, Printer::Start);
 	for( ; ; ) {
 		_Accept(~WATCardOffice){
 			for( unsigned int i = 0; i < numCouriers; i++ ) {
@@ -79,4 +94,5 @@ void WATCardOffice::main() {
 		} or _Accept( requestWork ) {
 		}
 	}
+	printer.print(Printer::WATCardOffice, Printer::Finish);
 }
