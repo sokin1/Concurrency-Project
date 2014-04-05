@@ -4,10 +4,14 @@
 NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ):
 prt(prt),numVendingMachines(numVendingMachines),numStudents(numStudents){
 	studentAssign = new unsigned int [numStudents];
+	VendingMachine** temp = new VendingMachine* [numVendingMachines];
+	machineList = temp;
+	machineCount = 0;
 }
 
 NameServer::~NameServer(){
-	delete studentAssign;
+	delete [] studentAssign;
+	delete machineList;
 }
 
 void NameServer::VMregister( VendingMachine *vendingmachine ){
@@ -40,10 +44,10 @@ void NameServer::main(){
 	}
 	
 	while(true){
-		_Accept(getMachine){
-		} or _Accept(getMachineList){
-		} or _Accept(~NameServer){
+		_Accept(~NameServer){
 			break;
+		} or _Accept(getMachine){
+		} or _Accept(getMachineList){
 		}
 	}
 }

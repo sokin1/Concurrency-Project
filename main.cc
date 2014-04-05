@@ -44,12 +44,10 @@ void uMain::main(){
 			if(!convert(seed, argv[2])) usage(argv);
 			if(seed <= 0) usage(argv);
 		case 2:
-			//Read in the config file
 			configFileName = argv[1];
-			processConfigFile(configFileName, config);
 		case 1:
-			//Set seed
 			RNG.seed(seed);
+			processConfigFile(configFileName, config);
 			break;
 		default:					// incorrect number of options
 			usage( argv );
@@ -68,16 +66,18 @@ void uMain::main(){
 		VendingMachine* v = new VendingMachine (printer, nameserver, id, config.sodaCost, config.maxStockPerFlavour);
 		v_list[id] = v;
 	}
-	BottlingPlant plant(printer, nameserver, config.numVendingMachines, config.maxShippedPerFlavour, config.maxStockPerFlavour, config.timeBetweenShipments);
+	BottlingPlant* plant = new BottlingPlant(printer, nameserver, config.numVendingMachines, 
+	config.maxShippedPerFlavour, config.maxStockPerFlavour, config.timeBetweenShipments);
 	for (unsigned int id=0; id<config.numStudents; id++){
 		Student* s = new Student (printer, nameserver, office, id, config.maxPurchases);
 		s_list[id] = s;
 	}
 	
-	//Stop students and vending machines
+	//Stop students then plant then vending machines
 	for (unsigned int id=0; id<config.numStudents; id++){
 		delete s_list[id];
 	}
+	delete plant;
 	for (unsigned int id=0; id<config.numVendingMachines; id++){
 		delete v_list[id];
 	}

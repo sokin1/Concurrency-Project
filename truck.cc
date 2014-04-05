@@ -4,6 +4,8 @@
 #include "nameserver.h"
 #include "vending.h"
 
+#include <iostream>
+
 extern MPRNG RNG;
 
 Truck::Truck( Printer &prt, NameServer &nameServer, BottlingPlant &plant,
@@ -13,10 +15,9 @@ plant(plant),numVendingMachines(numVendingMachines),maxStockPerFlavour(maxStockP
 }
 
 void Truck::main(){
-	
 	while(true){
 		// Get coffee from Timmy's
-		yield(RNG(1,10)); 
+		yield(RNG(1,10));
 		
 		// Get cargo from plant
 		bool isPlantClosed = plant.getShipment(cargo);
@@ -53,8 +54,5 @@ void Truck::main(){
 			// Restocking is completed
 			v->restocked();
 		}
-		
-		//TODO: DOES THIS HAVE TO WAIT HERE? prob not...
-		
 	}
 }

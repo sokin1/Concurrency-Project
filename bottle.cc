@@ -1,13 +1,20 @@
 #include "bottle.h"
 #include "MPRNG.h"
 
+#include <iostream>
+
 extern MPRNG RNG;
 
 BottlingPlant::BottlingPlant( Printer &prt, NameServer &nameServer, unsigned int numVendingMachines,
 unsigned int maxShippedPerFlavour, unsigned int maxStockPerFlavour, unsigned int timeBetweenShipments):
 prt(prt), nameServer(nameServer), numVendingMachines(numVendingMachines), 
-maxShippedPerFlavour(maxShippedPerFlavour), maxStockPerFlavour(maxStockPerFlavour){
-	production[0] = production[1] = production[2] = production[3] = 0;
+maxShippedPerFlavour(maxShippedPerFlavour), maxStockPerFlavour(maxStockPerFlavour),
+timeBetweenShipments(timeBetweenShipments){
+	production[0] = 0;
+	production[1] = 0;
+	production[2] = 0;
+	production[3] = 0;
+	isClosed = false;
 }
 
 bool BottlingPlant::getShipment( unsigned int cargo[] ){
@@ -21,6 +28,7 @@ bool BottlingPlant::getShipment( unsigned int cargo[] ){
 void BottlingPlant::main(){
 	Truck truck(prt, nameServer, *this, numVendingMachines, maxStockPerFlavour);
 	while(true){
+		
 		//pretend to be busy producing
 		yield(timeBetweenShipments);
 		
@@ -34,13 +42,12 @@ void BottlingPlant::main(){
 		shipped = RNG(0,maxShippedPerFlavour);
 		production[3] = shipped;
 		
-		//wait for truck to pick the items up
-		_Accept(getShipment) {} or
 		_Accept(~BottlingPlant){
 			//Make one last delivery for truck to terminate
 			isClosed = true;
 			_Accept(getShipment);
 			break;
+		} or _Accept(getShipment){
 		}
 	}
 }

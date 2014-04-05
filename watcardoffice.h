@@ -28,15 +28,15 @@ _Task WATCardOffice {
 	_Task Courier {
 		Bank& bank;
 		WATCardOffice *office;
-
 		void doWithdraw( unsigned int id, unsigned int amount, WATCard* card );
 		void main();
 		public:
+			void transferDone();
 			Courier( Bank& b, WATCardOffice *office )
 			: bank( b ), office( office ) {}
 	};                 // communicates with bank
 
-	Courier *couriers;
+	Courier **couriers;
 	Printer &printer;
 	unsigned int numCouriers;
 

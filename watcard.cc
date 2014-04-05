@@ -4,8 +4,8 @@ WATCard::WATCard( const WATCard & ) {
 }
 
 WATCard& WATCard::operator=( const WATCard& w) {
-	//TODO: check how to do this properly
 	currentBalance = w.currentBalance;
+	//TODO: check how to assign FWATCard properly
 	// FWATCard = w.FWATCard;
 	return *this;
 }
