@@ -9,7 +9,6 @@ id(id),maxPurchases(maxPurchases){}
 void Student::main(){
 	unsigned int numPurchases = mprng( 1, maxPurchases+1 );
 	unsigned int flavour = mprng( 4 );
-	int i = 0;
 	bool reAttempt = false;
 
 	// Create watcard
@@ -17,7 +16,7 @@ void Student::main(){
 	VendingMachine *machine;
 
 	// Purchase sodas
-	while( i <= numPurchases ) {
+	while( numPurchases != 0 ) {
 		if( !reAttempt ) {
 			yield( mprng( 1, 11 ) );
 			machine = nameServer.getMachine( id );
@@ -28,14 +27,11 @@ void Student::main(){
 			VendingMachine::Status status;
 			status = machine->buy( flavour, *watcard() );
 			if( status == VendingMachine::BUY ) {
+				numPurchases--;
 			} else if ( VendingMachine::STOCK ) {
-				machine = nameServer.getMachine( id );
-				continue;
 			} else if ( VendingMachine::FUNDS ) {
 				watcard = cardOffice.transfer( id, machine->cost()+5, *watcard() );
-				continue;
 			}
-			i++;
 		} catch( WATCardOffice::Lost ) {
 			// If card is lost, create new watcard
 			watcard = cardOffice.create( id, 5 );
