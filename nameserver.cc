@@ -1,5 +1,6 @@
 #include "nameserver.h"
 #include "vending.h"
+#include "printer.h"
 
 NameServer::NameServer( Printer &prt, unsigned int numVendingMachines, unsigned int numStudents ):
 prt(prt),numVendingMachines(numVendingMachines),numStudents(numStudents){
@@ -15,11 +16,13 @@ NameServer::~NameServer(){
 }
 
 void NameServer::VMregister( VendingMachine *vendingmachine ){
+	prt.print(Printer::NameServer, Printer::RegVendMachine, (int)machineCount);
 	machineList[machineCount] = vendingmachine;
 	machineCount++;
 }
 
 VendingMachine* NameServer::getMachine( unsigned int id ){	//id is the student's id
+	prt.print(Printer::NameServer, Printer::NewVendMachine, (int)id, (int)studentAssign[id]);
 	unsigned int temp = studentAssign[id];
 	studentAssign[id] = (studentAssign[id] + 1) % numVendingMachines;
 	return machineList[temp];
@@ -30,6 +33,8 @@ VendingMachine** NameServer::getMachineList(){
 }
 
 void NameServer::main(){
+	
+	prt.print(Printer::NameServer, Printer::Start);
 	
 	//Assign students to vending machines
 	for (unsigned int i=0; i<numStudents; i++){
@@ -50,4 +55,6 @@ void NameServer::main(){
 		} or _Accept(getMachineList){
 		}
 	}
+	
+	prt.print(Printer::NameServer, Printer::Finish);
 }

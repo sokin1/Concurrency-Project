@@ -1,6 +1,7 @@
 #include "vending.h"
 #include "nameserver.h"
 #include "watcard.h"
+#include "printer.h"
 
 VendingMachine::VendingMachine( Printer &prt, NameServer &nameServer, unsigned int id, unsigned int sodaCost,
 unsigned int maxStockPerFlavour ):prt(prt),nameServer(nameServer),id(id),sodaCost(sodaCost),
@@ -22,16 +23,19 @@ VendingMachine::Status VendingMachine::buy(Flavours flavour, WATCard &card){
 	// Successful buy
 	} else {
 		stock[flavour]--;
+		prt.print(Printer::Vending, (unsigned int)id, (char)Printer::StudentBought, (int)flavour, stock[flavour]);
 		card.withdraw(sodaCost);
 		return BUY;
 	}
 }
 
 unsigned int* VendingMachine::inventory(){
+	prt.print(Printer::Vending, (unsigned int)id, (char)Printer::StartReload);
 	return stock;
 }
 
 void VendingMachine::restocked(){
+	prt.print(Printer::Vending, (unsigned int)id, (char)Printer::CompleteReload);
 	return;
 }
 
@@ -44,7 +48,7 @@ unsigned int VendingMachine::getId(){
 }
 
 void VendingMachine::main(){
-	
+	prt.print(Printer::Vending, (unsigned int)id, (char)Printer::Start, (int)sodaCost);
 	while (true){
 		_Accept(buy){
 			
@@ -60,4 +64,5 @@ void VendingMachine::main(){
 			
 		// }
 	}
+	prt.print(Printer::Vending, (unsigned int)id, (char)Printer::Finish);
 }
