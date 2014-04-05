@@ -3,7 +3,6 @@
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers )
 : printer( prt ), numCouriers( numCouriers ) {
 	WATCardOffice::Courier *newCouriers[numCouriers];
-//	couriers = new WATCardOffice::Courier[numCouriers];
 	for( int i = 0; i < numCouriers; i++ ) {
 		newCouriers[i] = new WATCardOffice::Courier( bank, this );
 	}
@@ -47,8 +46,14 @@ void WATCardOffice::Courier::main() {
 
 	doWithdraw( job->args.id, job->args.amount, job->args.card );
 
-	job->result.reset();
-	job->result.delivery( job->args.card );
+	if( mprng( 6 ) == 0 ) {		// Watcard is lost
+		job->result.reset();
+		job->result.exception( new WATCardOffice::LOST );
+		delete job->args.card;
+	} else {
+		job->result.reset();
+		job->result.delivery( job->args.card );
+	}
 }
 
 void WATCardOffice::main() {
