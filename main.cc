@@ -1,4 +1,5 @@
 #include <iostream>
+#include <sstream>
 #include "bank.h"
 #include "bottle.h"
 #include "config.h"
@@ -15,15 +16,44 @@ using namespace std;
 
 MPRNG RNG;
 
+//Usage Error Message
+void usage( char *argv[] ) {
+    cerr << "Usage: " << argv[0] << 
+	 " [ config-file [ random-seed (> 0) ] ]" << endl;
+    exit( EXIT_FAILURE );				// TERMINATE
+}
+
+//Converts C string to integer
+bool convert( int &val, char *buffer ) {		// convert C string to integer
+   stringstream ss( buffer );						// connect stream and buffer
+   ss >> dec >> val;									// convert integer from buffer
+   return ! ss.fail() &&							// conversion successful ?
+	// characters after conversion all blank ?
+	string( buffer ).find_first_not_of( " ", ss.tellg() ) == string::npos;
+}
+
 void uMain::main(){
 	
-	//Read in the seed
-	//...
-	RNG.seed(getpid());
-	
-	//Read in the config file
+	//default input values
+	char* configFileName = (char*)"soda.config";	//File Name
+	int seed = getpid();													//Seed
 	ConfigParms config;
-	processConfigFile("soda.config", config);
+	
+	switch ( argc ) {		// check command line arguments for correct input
+		case 3:
+			if(!convert(seed, argv[2])) usage(argv);
+			if(seed <= 0) usage(argv);
+		case 2:
+			//Read in the config file
+			configFileName = argv[1];
+			processConfigFile(configFileName, config);
+		case 1:
+			//Set seed
+			RNG.seed(seed);
+			break;
+		default:					// incorrect number of options
+			usage( argv );
+	}
 	
 	VendingMachine* v_list[config.numVendingMachines];
 	Student* s_list[config.numStudents];
