@@ -1,13 +1,11 @@
 #include "watcard.h"
 
+// This is for preventing copy - Do not need to implement
 WATCard::WATCard( const WATCard & ) {
 }
 
+// This is for preventing copy - Do not need to implement
 WATCard& WATCard::operator=( const WATCard& w) {
-	currentBalance = w.currentBalance;
-	//TODO: check how to assign FWATCard properly
-	// FWATCard = w.FWATCard;
-	return *this;
 }
 
 WATCard::WATCard()
