@@ -41,7 +41,7 @@ void Truck::main(){
 			unsigned int* inv = v->inventory();
 			
 			//For printing purpose
-			int unfilled;
+			int unfilled = 0;
 			
 			// Fill all 4 flavours
 			for (unsigned int j=0; j<4; j++){
