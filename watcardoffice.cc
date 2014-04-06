@@ -58,10 +58,7 @@ WATCardOffice::Job* WATCardOffice::requestWork() {
 	printer.print(Printer::WATCardOffice, Printer::CourierRComplete);
 	if( jobList.empty() ) waiter.wait();
 	if( terminate ) {
-		curArgs.id = -1;
-		curArgs.amount = -1;
-		curArgs.card = NULL;
-		return new struct Job( curArgs );
+		return NULL;
 	}
 	struct Job *newJob = jobList.front();
 	jobList.pop();
@@ -78,7 +75,7 @@ void WATCardOffice::Courier::transferDone(){
 
 bool WATCardOffice::Courier::getWork() {
 	Job *job = office->requestWork();
-	if( job->args.id == -1 ) return false;
+	if( job == NULL ) return false;
 	doWithdraw( job->args.id, job->args.amount, job->args.card );
 	if( RNG( 5 ) == 0 ) {		// Watcard is lost - 1 in 6 chances (RNG of 0 to 5)
 		job->result.reset();

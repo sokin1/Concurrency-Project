@@ -82,5 +82,5 @@ void uMain::main(){
 	for (unsigned int id=0; id<config.numVendingMachines; id++){
 		delete v_list[id];
 	}
-	
+		
 }

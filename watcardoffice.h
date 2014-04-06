@@ -10,7 +10,7 @@ typedef Future_ISM<WATCard *> FWATCard; // future watcard pointer
 _Task Courier;
 
 _Task WATCardOffice {
-	
+
 	struct Args {
 		unsigned int id;
 		unsigned int amount;
@@ -25,7 +25,7 @@ _Task WATCardOffice {
 
 	struct Args curArgs;
 	std::queue<struct Job *> jobList;
-	
+
 	_Task Courier {
 		Bank& bank;
 		WATCardOffice *office;
