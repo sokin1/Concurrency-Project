@@ -2,10 +2,6 @@
 #include "MPRNG.h"
 #include "printer.h"
 
-#include <iostream>
-
-// #include <iostream>
-
 extern MPRNG RNG;
 
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers )
@@ -17,6 +13,7 @@ WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers
 	couriers = temp;
 }
 
+//Create balance
 FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
 	printer.print(Printer::WATCardOffice, Printer::CreationRComplete, (int)sid, (int)amount);
 
@@ -31,7 +28,6 @@ FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
 	waiter.signal();
 
 	return initJob->result;
-//	return transfer( sid, amount, newCard );
 }
 
 //Transfers money from the bank to the WATCard 
@@ -50,10 +46,10 @@ FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard
 	int courierNum = courierCount % numCouriers;
 	courierCount++;
 	printer.print(Printer::Courier, (unsigned int)courierNum, (char)Printer::StartFundTransfer, sid, amount);
-//	couriers[courierNum]->transferDone();
 	return curJob->result;
 }
 
+//Request a worker
 WATCardOffice::Job* WATCardOffice::requestWork() {
 	printer.print(Printer::WATCardOffice, Printer::CourierRComplete);
 	if( jobList.empty() ) waiter.wait();
@@ -65,14 +61,13 @@ WATCardOffice::Job* WATCardOffice::requestWork() {
 	return newJob;
 }
 
+//Worker does the withdrawal
 void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, WATCard* card ) {
 	bank.withdraw( id, amount );
 	card->deposit( amount );
 }
 
-void WATCardOffice::Courier::transferDone(){
-}
-
+//Worker gets work
 bool WATCardOffice::Courier::getWork() {
 	Job *job = office->requestWork();
 	if( job == NULL ) return false;

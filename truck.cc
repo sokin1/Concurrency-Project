@@ -5,8 +5,6 @@
 #include "vending.h"
 #include "printer.h"
 
-// #include <iostream>
-
 extern MPRNG RNG;
 
 Truck::Truck( Printer &prt, NameServer &nameServer, BottlingPlant &plant,
@@ -24,7 +22,7 @@ void Truck::main(){
 		// Get cargo from plant
 		bool isPlantClosed = plant.getShipment(cargo);
 		if (isPlantClosed){
-			break;	//exit loop
+			break;	//exit loop when plant is closed
 		}
 		
 		prt.print(Printer::Truck, Printer::PickedUp, (int)(cargo[0]+cargo[1]+cargo[2]+cargo[3]));
@@ -61,8 +59,7 @@ void Truck::main(){
 					}
 				}
 			}
-			prt.print(Printer::Truck, Printer::UnsuccessFill, (int)i, unfilled);
-			
+			if (unfilled > 0) prt.print(Printer::Truck, Printer::UnsuccessFill, (int)i, unfilled);
 			prt.print(Printer::Truck, Printer::EndDelivery, (int)i, (int)(cargo[0]+cargo[1]+cargo[2]+cargo[3]));
 			// Restocking is completed
 			v->restocked();

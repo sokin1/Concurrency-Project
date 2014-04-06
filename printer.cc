@@ -27,11 +27,7 @@ numStudents(numStudents), numVendingMachines(numVendingMachines), numCouriers(nu
 	cout << endl;
 }
 
-// S has 0 or 1 or 2 arguments...
-// B has 1 or 2 arguments...
-// R has 0 or 1 arguments...
-// P has 0 or 1 arguments...
-
+//Flush buffer
 void Printer::flush() {
 	for( unsigned int i = 0; i < numOfColumns; i++ ) {
 		if( buffer[i].buffered ) {
@@ -56,6 +52,7 @@ void Printer::flush() {
 	cout << endl;
 }
 
+//Flush buffer when the state is "Finish"
 void Printer::flush_finish( unsigned int id ) {
 	for( unsigned int i = 0; i < numOfColumns; i++ ) {
 		if( i == id ) {

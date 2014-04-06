@@ -2,8 +2,6 @@
 #include "MPRNG.h"
 #include "printer.h"
 
-// #include <iostream>
-
 extern MPRNG RNG;
 
 BottlingPlant::BottlingPlant( Printer &prt, NameServer &nameServer, unsigned int numVendingMachines,
@@ -18,6 +16,8 @@ timeBetweenShipments(timeBetweenShipments){
 	isClosed = false;
 }
 
+//Put produced items into the truck's cargo
+//Return true if plant is shutting down
 bool BottlingPlant::getShipment( unsigned int cargo[] ){
 	prt.print(Printer::BottlingPlant, Printer::PickedUp);
 	cargo[0] = production[0];
@@ -31,10 +31,9 @@ void BottlingPlant::main(){
 	prt.print(Printer::BottlingPlant, Printer::Start);
 	Truck truck(prt, nameServer, *this, numVendingMachines, maxStockPerFlavour);
 	while(true){
-		
 		//pretend to be busy producing
 		yield(timeBetweenShipments);
-		
+
 		//the actual production run
 		unsigned int shipped = RNG(0,maxShippedPerFlavour);
 		production[0] = shipped;
@@ -45,6 +44,7 @@ void BottlingPlant::main(){
 		shipped = RNG(0,maxShippedPerFlavour);
 		production[3] = shipped;
 		
+		//total number of bottles produced
 		int total = production[0] + production[1] + production[2] + production[3];
 		prt.print(Printer::BottlingPlant, Printer::GenSoda, total);
 		

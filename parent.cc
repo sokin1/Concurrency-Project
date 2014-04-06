@@ -3,8 +3,6 @@
 #include "bank.h"
 #include "printer.h"
 
-// #include <iostream>
-
 extern MPRNG RNG;
 
 Parent::Parent( Printer &prt, Bank &bank, unsigned int numStudents, unsigned int parentalDelay ) :
@@ -16,6 +14,7 @@ void Parent::main() {
 		_Accept( ~Parent ) {
 			break;
 		} _Else {
+			//Randomly give a student some money (via the bank)
 			unsigned int studentID = RNG(numStudents - 1);
 			unsigned int depositAmount = RNG( 1, 3 );
 			yield( parentalDelay );

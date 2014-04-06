@@ -6,8 +6,6 @@
 #include "printer.h"
 #include "MPRNG.h"
 
-#include <iostream>
-
 extern MPRNG RNG;
 
 Student::Student( Printer &prt, NameServer &nameServer, WATCardOffice &cardOffice, unsigned int id, 
@@ -16,8 +14,8 @@ id(id),maxPurchases(maxPurchases){}
 
 void Student::main(){
 
-	unsigned int numPurchases = RNG( 1, maxPurchases+1 );
-	unsigned int flavour = RNG( 4 );
+	unsigned int numPurchases = RNG(1, maxPurchases);
+	unsigned int flavour = RNG(3);
 	
 	prt.print(Printer::Student, (unsigned int)id, (char)Printer::Start, (int)flavour, (int)numPurchases);
 	
@@ -30,7 +28,7 @@ void Student::main(){
 	// Purchase sodas
 	while( numPurchases != 0 ) {
 		if( !reAttempt ) {
-			yield( RNG( 1, 11 ) );
+			yield( RNG( 1, 10 ) );
 			machine = nameServer.getMachine( id );
 			prt.print(Printer::Student, (unsigned int)id, (char)Printer::SelectVendMachine, (int)machine->getId());
 		}
@@ -40,10 +38,12 @@ void Student::main(){
 			VendingMachine::Status status;
 			status = machine->buy( (VendingMachine::Flavours) flavour, *watcard() );
 			if( status == VendingMachine::BUY ) {
+				// Successful buy
 				prt.print(Printer::Student, (unsigned int)id, (char)Printer::Bought, (int)watcard()->getBalance());
 				numPurchases--;
 			} else if ( status == VendingMachine::STOCK ) {
 			} else if ( status == VendingMachine::FUNDS ) {
+				// Need more funds, call transfer
 				watcard = cardOffice.transfer( id, machine->cost()+5, watcard() );
 			}
 		} catch( WATCardOffice::Lost ) {

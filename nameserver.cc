@@ -15,12 +15,14 @@ NameServer::~NameServer(){
 	delete machineList;
 }
 
+//Registers vending machine with the nameserver
 void NameServer::VMregister( VendingMachine *vendingmachine ){
 	prt.print(Printer::NameServer, Printer::RegVendMachine, (int)machineCount);
 	machineList[machineCount] = vendingmachine;
 	machineCount++;
 }
 
+//Get vending machine that's associated with the student's id
 VendingMachine* NameServer::getMachine( unsigned int id ){	//id is the student's id
 	prt.print(Printer::NameServer, Printer::NewVendMachine, (int)id, (int)studentAssign[id]);
 	unsigned int temp = studentAssign[id];
@@ -28,12 +30,12 @@ VendingMachine* NameServer::getMachine( unsigned int id ){	//id is the student's
 	return machineList[temp];
 }
 
+//Get the entire list of vending machines
 VendingMachine** NameServer::getMachineList(){
 	return machineList;
 }
 
 void NameServer::main(){
-	
 	prt.print(Printer::NameServer, Printer::Start);
 	
 	//Assign students to vending machines

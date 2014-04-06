@@ -35,17 +35,16 @@ _Task WATCardOffice {
 		void doWithdraw( unsigned int id, unsigned int amount, WATCard* card );
 		void main();
 	public:
-		void transferDone();
 		Courier( Bank& b, WATCardOffice *office, unsigned int id, Printer &prt )
 		: bank( b ), office( office ), id(id), printer(prt) {}
 	};                 // communicates with bank
 
-	bool terminate;
 	uCondition waiter;
 	Courier **couriers;
 	Printer &printer;
 	unsigned int numCouriers;
 	unsigned int courierCount;
+	bool terminate;
 	void main();
 public:
 	_Event Lost {};                        // uC++ exception type, like "struct"

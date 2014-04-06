@@ -22,7 +22,7 @@ VendingMachine::Status VendingMachine::buy(Flavours flavour, WATCard &card){
 		return FUNDS;
 	// Successful buy
 	} else {
-		stock[flavour]--;
+		stock[flavour] = stock[flavour] - 1;
 		prt.print(Printer::Vending, (unsigned int)id, (char)Printer::StudentBought, (int)flavour, stock[flavour]);
 		card.withdraw(sodaCost);
 		return BUY;
@@ -51,18 +51,12 @@ void VendingMachine::main(){
 	prt.print(Printer::Vending, (unsigned int)id, (char)Printer::Start, (int)sodaCost);
 	while (true){
 		_Accept(buy){
-			
 		} or _Accept(inventory){
 			// Block here while restocking
 			_Accept(restocked);
 		} or _Accept(~VendingMachine){
 			break;
 		}
-		// or _Accept(cost){	//TODO: what to do with these?
-			
-		// } or _Accept(getId){
-			
-		// }
 	}
 	prt.print(Printer::Vending, (unsigned int)id, (char)Printer::Finish);
 }
