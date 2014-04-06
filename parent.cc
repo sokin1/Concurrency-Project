@@ -16,7 +16,7 @@ void Parent::main() {
 		_Accept( ~Parent ) {
 			break;
 		} _Else {
-			unsigned int studentID = RNG( numStudents );
+			unsigned int studentID = RNG(numStudents - 1);
 			unsigned int depositAmount = RNG( 1, 3 );
 			yield( parentalDelay );
 			printer.print(Printer::Parent, Printer::Deposit, (int)studentID, (int)depositAmount);

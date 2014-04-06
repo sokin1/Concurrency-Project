@@ -59,7 +59,7 @@ void uMain::main(){
 	//Initialize the entire thing (order according to assignment)
 	Printer printer(config.numStudents, config.numVendingMachines, config.numCouriers);
 	Bank bank(config.numStudents);
-	Parent parent(printer, bank, config.numStudents, config.parentalDelay);
+	Parent* parent = new Parent(printer, bank, config.numStudents, config.parentalDelay);
 	WATCardOffice office(printer, bank, config.numCouriers);
 	NameServer nameserver(printer, config.numVendingMachines, config.numStudents);
 	for (unsigned int id=0; id<config.numVendingMachines; id++){
@@ -77,6 +77,7 @@ void uMain::main(){
 	for (unsigned int id=0; id<config.numStudents; id++){
 		delete s_list[id];
 	}
+	delete parent;
 	delete plant;
 	for (unsigned int id=0; id<config.numVendingMachines; id++){
 		delete v_list[id];

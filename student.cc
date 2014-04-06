@@ -42,8 +42,8 @@ void Student::main(){
 			if( status == VendingMachine::BUY ) {
 				prt.print(Printer::Student, (unsigned int)id, (char)Printer::Bought, (int)watcard()->getBalance());
 				numPurchases--;
-			} else if ( VendingMachine::STOCK ) {
-			} else if ( VendingMachine::FUNDS ) {
+			} else if ( status == VendingMachine::STOCK ) {
+			} else if ( status == VendingMachine::FUNDS ) {
 				watcard = cardOffice.transfer( id, machine->cost()+5, watcard() );
 			}
 		} catch( WATCardOffice::Lost ) {
