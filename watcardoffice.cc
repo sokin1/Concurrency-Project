@@ -2,6 +2,8 @@
 #include "MPRNG.h"
 #include "printer.h"
 
+#include <iostream>
+
 // #include <iostream>
 
 extern MPRNG RNG;
@@ -17,8 +19,18 @@ WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers
 
 FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
 	printer.print(Printer::WATCardOffice, Printer::CreationRComplete, (int)sid, (int)amount);
+
 	WATCard *newCard = new WATCard();
-	return transfer( sid, amount, newCard );
+
+	curArgs.id = sid;
+	curArgs.amount = 5;
+	curArgs.card = newCard;
+
+	struct Job *initJob = new struct Job( curArgs );
+	jobList.push( initJob );
+
+	return initJob->result;
+//	return transfer( sid, amount, newCard );
 }
 
 //Transfers money from the bank to the WATCard 
@@ -32,17 +44,17 @@ FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard
 
 	struct Job *curJob = new struct Job( curArgs );
 	jobList.push( curJob );
-	
-	//get a random courier to start the job
+
 	int courierNum = courierCount % numCouriers;
 	courierCount++;
 	printer.print(Printer::Courier, (unsigned int)courierNum, (char)Printer::StartFundTransfer, sid, amount);
-	couriers[courierNum]->transferDone();
+//	couriers[courierNum]->transferDone();
 	return curJob->result;
 }
 
 WATCardOffice::Job* WATCardOffice::requestWork() {
 	printer.print(Printer::WATCardOffice, Printer::CourierRComplete);
+//	if( jobList.empty() ) waiter.wait();
 	struct Job *newJob = jobList.front();
 	jobList.pop();
 	return newJob;
@@ -53,28 +65,32 @@ void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, W
 	card->deposit( amount );
 }
 
-void WATCardOffice::Courier::transferDone(){}
+void WATCardOffice::Courier::transferDone(){
+}
+
+void WATCardOffice::Courier::getWork() {
+	Job *job = office->requestWork();
+	doWithdraw( job->args.id, job->args.amount, job->args.card );
+	if( RNG( 5 ) == 0 ) {		// Watcard is lost - 1 in 6 chances (RNG of 0 to 5)
+		job->result.reset();
+		job->result.exception( new Lost );
+		delete job->args.card;
+	} else {
+		job->result.reset();
+		job->result.delivery( job->args.card );
+		printer.print(Printer::Courier, (unsigned int)id, (char)Printer::CompleteFundTransfer,
+		job->args.id, job->args.amount);
+	}
+	delete job;
+}
 
 void WATCardOffice::Courier::main() {
 	printer.print(Printer::Courier, (unsigned int)id, (char)Printer::Start);
 	for (;;){
 		_Accept(~Courier){
 			break;
-		} or _Accept(transferDone){
-			Job *job = office->requestWork();
-			doWithdraw( job->args.id, job->args.amount, job->args.card );
-			if( RNG( 5 ) == 0 ) {		// Watcard is lost - 1 in 6 chances (RNG of 0 to 5)
-				job->result.reset();
-				job->result.exception( new Lost );
-				delete job->args.card;
-			} else {
-				job->result.reset();
-				job->result.delivery( job->args.card );
-				printer.print(Printer::Courier, (unsigned int)id, (char)Printer::CompleteFundTransfer,
-				job->args.id, job->args.amount);
-			}
-			//TODO: keep this?
-			delete job;
+		} _Else {
+			getWork();
 		}
 	}
 	printer.print(Printer::Courier, (unsigned int)id, (char)Printer::Finish);

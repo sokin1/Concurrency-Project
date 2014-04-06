@@ -31,6 +31,7 @@ _Task WATCardOffice {
 		WATCardOffice *office;
 		unsigned int id;
 		Printer& printer;
+		_Mutex void getWork();
 		void doWithdraw( unsigned int id, unsigned int amount, WATCard* card );
 		void main();
 	public:
