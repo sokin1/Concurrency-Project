@@ -9,7 +9,7 @@
 extern MPRNG RNG;
 
 WATCardOffice::WATCardOffice( Printer &prt, Bank &bank, unsigned int numCouriers )
-: printer( prt ), numCouriers( numCouriers ), courierCount(0) {
+: printer( prt ), numCouriers( numCouriers ), courierCount(0), terminate( false ) {
 	Courier** temp = new Courier* [numCouriers];
 	for( unsigned int i = 0; i < numCouriers; i++ ) {
 		temp[i] = new Courier( bank, this, i, prt );
@@ -57,11 +57,15 @@ FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard
 WATCardOffice::Job* WATCardOffice::requestWork() {
 	printer.print(Printer::WATCardOffice, Printer::CourierRComplete);
 	if( jobList.empty() ) waiter.wait();
-//	_When( jobList.empty() ) _Accept( transfer ) {
+	if( terminate ) {
+		curArgs.id = -1;
+		curArgs.amount = -1;
+		curArgs.card = NULL;
+		return new struct Job( curArgs );
+	}
 	struct Job *newJob = jobList.front();
 	jobList.pop();
 	return newJob;
-//	}
 }
 
 void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, WATCard* card ) {
@@ -72,8 +76,9 @@ void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, W
 void WATCardOffice::Courier::transferDone(){
 }
 
-void WATCardOffice::Courier::getWork() {
+bool WATCardOffice::Courier::getWork() {
 	Job *job = office->requestWork();
+	if( job->args.id == -1 ) return false;
 	doWithdraw( job->args.id, job->args.amount, job->args.card );
 	if( RNG( 5 ) == 0 ) {		// Watcard is lost - 1 in 6 chances (RNG of 0 to 5)
 		job->result.reset();
@@ -86,6 +91,7 @@ void WATCardOffice::Courier::getWork() {
 		job->args.id, job->args.amount);
 	}
 	delete job;
+	return true;
 }
 
 void WATCardOffice::Courier::main() {
@@ -94,7 +100,7 @@ void WATCardOffice::Courier::main() {
 		_Accept(~Courier){
 			break;
 		} _Else {
-			getWork();
+			if( !getWork() ) break;
 		}
 	}
 	printer.print(Printer::Courier, (unsigned int)id, (char)Printer::Finish);
@@ -104,6 +110,8 @@ void WATCardOffice::main() {
 	printer.print(Printer::WATCardOffice, Printer::Start);
 	for( ; ; ) {
 		_Accept(~WATCardOffice){
+			terminate = true;
+			while( !waiter.empty() ) waiter.signalBlock();
 			for( unsigned int i = 0; i < numCouriers; i++ ) {
 				delete couriers[i];
 			}

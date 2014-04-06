@@ -31,7 +31,7 @@ _Task WATCardOffice {
 		WATCardOffice *office;
 		unsigned int id;
 		Printer& printer;
-		_Mutex void getWork();
+		_Mutex bool getWork();
 		void doWithdraw( unsigned int id, unsigned int amount, WATCard* card );
 		void main();
 	public:
@@ -40,6 +40,7 @@ _Task WATCardOffice {
 		: bank( b ), office( office ), id(id), printer(prt) {}
 	};                 // communicates with bank
 
+	bool terminate;
 	uCondition waiter;
 	Courier **couriers;
 	Printer &printer;
