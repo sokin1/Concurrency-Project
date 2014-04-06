@@ -40,6 +40,7 @@ _Task WATCardOffice {
 		: bank( b ), office( office ), id(id), printer(prt) {}
 	};                 // communicates with bank
 
+	uCondition waiter;
 	Courier **couriers;
 	Printer &printer;
 	unsigned int numCouriers;

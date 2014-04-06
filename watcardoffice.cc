@@ -28,6 +28,7 @@ FWATCard WATCardOffice::create( unsigned int sid, unsigned int amount ) {
 
 	struct Job *initJob = new struct Job( curArgs );
 	jobList.push( initJob );
+	waiter.signal();
 
 	return initJob->result;
 //	return transfer( sid, amount, newCard );
@@ -44,6 +45,7 @@ FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard
 
 	struct Job *curJob = new struct Job( curArgs );
 	jobList.push( curJob );
+	waiter.signal();
 
 	int courierNum = courierCount % numCouriers;
 	courierCount++;
@@ -54,10 +56,12 @@ FWATCard WATCardOffice::transfer( unsigned int sid, unsigned int amount, WATCard
 
 WATCardOffice::Job* WATCardOffice::requestWork() {
 	printer.print(Printer::WATCardOffice, Printer::CourierRComplete);
-//	if( jobList.empty() ) waiter.wait();
+	if( jobList.empty() ) waiter.wait();
+//	_When( jobList.empty() ) _Accept( transfer ) {
 	struct Job *newJob = jobList.front();
 	jobList.pop();
 	return newJob;
+//	}
 }
 
 void WATCardOffice::Courier::doWithdraw( unsigned int id, unsigned int amount, WATCard* card ) {
